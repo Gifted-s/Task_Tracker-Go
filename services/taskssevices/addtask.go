@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AddTaskService(_id primitive.ObjectID, taskDetails models.Task) (models.List) {
-	result := tododb.AddTask(_id, taskDetails )
+func AddTaskService(_id primitive.ObjectID,user_id primitive.ObjectID, taskDetails models.Task) (models.User) {
+	result := tododb.AddTask(_id,user_id, taskDetails )
 	return result
 }

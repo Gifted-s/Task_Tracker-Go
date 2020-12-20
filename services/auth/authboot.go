@@ -7,14 +7,19 @@ import (
 	// "encoding/json"
 	"fmt"
 	"net/http"
+
 	// "strconv"
+	"big-todo-app/data-access/tododb"
 	"big-todo-app/models"
+	"big-todo-app/modules"
 	"strings"
 
 	"time"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	jwt "github.com/dgrijalva/jwt-go"
-
+    
 	// "github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis/v7"
 	// "big-todo-app/services/listservices"
@@ -267,3 +272,39 @@ func HandleRefreshToken(refreshToken  string)(map[string]string, string){
 		return nil, "Token is invalid"
 	}
 }
+
+func HandleSignup(user models.User)(*mongo.InsertOneResult, string){
+userExist := tododb.GetUser(user.Email)
+if userExist.Email != "" {
+	return nil, "User already exist"
+}
+hashedPassword,errToHash := modules.HashPassword(user.Password)
+if errToHash!= nil {
+	return nil, "Error hashing password"
+}
+user.Password = hashedPassword
+user.DateCreated = modules.GetTodayDate()
+insertResponse, err :=tododb.InsertUser(user)
+if err!= nil {
+	return nil, "Error Inserting User"
+}
+
+return insertResponse, ""
+}
+
+
+func HandleLogin(user models.User)(models.User, string){
+	userExist := tododb.GetUser(user.Email)
+	if userExist.Email == "" {
+		return user, "User does e notxist"
+	}
+	
+	passwordValid := modules.CheckPasswordHash(user.Password, userExist.Password )
+	if !passwordValid {
+		return user, "Error hashing password"
+	}
+
+	
+	return userExist, ""
+	}
+	

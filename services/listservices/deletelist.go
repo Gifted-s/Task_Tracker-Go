@@ -2,15 +2,13 @@ package listservices
 
 import (
 	"big-todo-app/data-access/tododb"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+	"big-todo-app/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"	
 )
 
-func DeleteListService(_id primitive.ObjectID) (*mongo.DeleteResult, error) {
+func DeleteListService(_id primitive.ObjectID, user_id primitive.ObjectID) (models.User) {
 
-	result, err := tododb.DeleteList(_id)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
+	result:= tododb.DeleteList(_id, user_id)
+	
+	return result
 }

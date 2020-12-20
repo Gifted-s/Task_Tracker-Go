@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetListService(_id primitive.ObjectID) (models.List, error) {
-	result := tododb.GetList(_id)
-	return result, nil
+func GetListService(_id primitive.ObjectID, user_id primitive.ObjectID) (models.User) {
+	result := tododb.GetList(_id, user_id)
+	return result
 }

@@ -24,6 +24,8 @@ type User struct {
 	ID  primitive.ObjectID  `json:"_id,omitempty" bson:"_id,omitempty"`
 	Email string  `json:"email,omitempty" bson:"email,omitempty"`
 	Password string `json:"password,omitempty" bson:"password,omitempty"`
+	DateCreated string  `json:"date_created,omitempty" bson:"date_created,omitempty"`
+	Lists []List `json:"lists,omitempty" bson:"lists,omitempty"`
 }
 
 type TokenDetailsStruct struct {

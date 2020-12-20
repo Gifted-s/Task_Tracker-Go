@@ -20,7 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
- func ConnectDB() [2]*mongo.Collection{
+ func ConnectDB() *mongo.Collection{
    clientOptions := options.Client().ApplyURI("mongodb://127.0.0.1:27017")
    client, err := mongo.Connect(context.TODO(), clientOptions)
 
@@ -28,8 +28,8 @@ import (
 	   log.Fatal(err)
    }
 
-   todo_collection  := client.Database("sunky_todo").Collection("todos")
+ 
    user_collection := client.Database("sunky_todo").Collection("users")
     
-   return [2]*mongo.Collection{todo_collection, user_collection}
+   return  user_collection
  }

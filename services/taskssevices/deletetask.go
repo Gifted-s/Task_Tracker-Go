@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func DeleteTaskService(_id primitive.ObjectID, task_id primitive.ObjectID) (models.List) {
-	result := tododb.DeleteTask(_id, task_id )
+func DeleteTaskService(_id primitive.ObjectID,user_id primitive.ObjectID, task_id primitive.ObjectID) (models.User) {
+	result := tododb.DeleteTask(_id,user_id, task_id )
 	return result
 }
