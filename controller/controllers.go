@@ -100,7 +100,8 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 	task_id, _ := primitive.ObjectIDFromHex(params["task_id"])
 	user_id, _ :=primitive.ObjectIDFromHex(params["user_id"])
 	task.ID = task_id
-	response := taskssevices.EditTaskService(_id,user_id, task)
+	response:= taskssevices.EditTaskService(_id,user_id, task)
+
 	responses.SuccessResponse(w, 200, response)
 }
 func CompleteTaskController(w http.ResponseWriter, r *http.Request) {

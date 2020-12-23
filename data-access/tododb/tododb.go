@@ -4,8 +4,8 @@ import (
 	"big-todo-app/data-access"
 	"big-todo-app/models"
 	"context"
+	"fmt"
 
-	// "fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -34,59 +34,82 @@ func AddTask(list_id primitive.ObjectID, user_id primitive.ObjectID, taskDetails
 	return user
 }
 
-func EditTask(list_id primitive.ObjectID, user_id primitive.ObjectID, taskDetails models.Task) *mongo.SingleResult {
+func EditTask(list_id primitive.ObjectID, user_id primitive.ObjectID, taskDetails models.Task) models.User {
 	// var user models.User
 	user_collection := createdb.ConnectDB()
-	// fmt.Println(list_id, user_id, taskDetails.ID)
-	// filter := bson.M{"_id": user_id, "lists.tasks._id": taskDetails.ID }
-	// update := bson.M{"$set": bson.M{"lists.tasks.$.name": taskDetails.Name}}
-
-	// re := user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
-	// fmt.Println(re)
-
-	us := user_collection.FindOneAndUpdate(
+	filter := bson.M{
+		"_id":       user_id,
+		"lists._id": list_id,
+	}
+	updateQuery := bson.M{"$set": bson.M{"lists.$.tasks.$[elem].name": taskDetails.Name}}
+	options := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{bson.M{
+			"elem._id": taskDetails.ID,
+		}},
+	})
+	user_collection.UpdateOne(
 		context.TODO(),
-		bson.M{
-			"_id":       user_id,
-			"lists._id": list_id,
-		},
-		bson.M{"$set": bson.M{"lists.$.tasks.$[elem].name": taskDetails.Name}},
-		options.FindOneAndUpdate().SetArrayFilters(options.ArrayFilters{
-			Filters: []interface{}{bson.M{
-				"elem._id": taskDetails.ID,
-			}},
-		}),
+		filter,
+		updateQuery,
+		options,
 	)
-	return us
+	user := GetUserById(user_id)
+	return user
+
 }
 func CompleteTask(list_id primitive.ObjectID, user_id primitive.ObjectID, task_id primitive.ObjectID) models.User {
-	var user models.User
-	filter := bson.M{"_id": user_id, "lists.tasks._id": task_id}
-	update := bson.M{"$set": bson.M{"lists.tasks.$.completed": true}}
 	user_collection := createdb.ConnectDB()
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	filter := bson.M{
+		"_id":       user_id,
+		"lists._id": list_id,
+	}
+	updateQuery := bson.M{"$set": bson.M{"lists.$.tasks.$[elem].completed": true}}
+	options := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{bson.M{
+			"elem._id": task_id,
+		}},
+	})
+	user_collection.UpdateOne(
+		context.TODO(),
+		filter,
+		updateQuery,
+		options,
+	)
+	user := GetUserById(user_id)
 	return user
 }
 
 func UndoTask(list_id primitive.ObjectID, user_id primitive.ObjectID, task_id primitive.ObjectID) models.User {
-	var user models.User
-
-	filter := bson.M{"_id": user_id, "lists.tasks._id": task_id}
-	update := bson.M{"$set": bson.M{"lists.tasks.$.completed": false}}
 	user_collection := createdb.ConnectDB()
-
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	filter := bson.M{
+		"_id":       user_id,
+		"lists._id": list_id,
+	}
+	updateQuery := bson.M{"$set": bson.M{"lists.$.tasks.$[elem].completed": false}}
+	options := options.Update().SetArrayFilters(options.ArrayFilters{
+		Filters: []interface{}{bson.M{
+			"elem._id": task_id,
+		}},
+	})
+	user_collection.UpdateOne(
+		context.TODO(),
+		filter,
+		updateQuery,
+		options,
+	)
+	user := GetUserById(user_id)
 	return user
 }
 func DeleteTask(list_id primitive.ObjectID, user_id primitive.ObjectID, task_id primitive.ObjectID) models.User {
-
+    fmt.Println(list_id, user_id, task_id)
 	var user models.User
 	filter := bson.M{"_id": user_id, "lists._id": list_id}
-	update := bson.M{"$pull": bson.M{"lists.tasks": bson.M{"_id": task_id}}}
+	update := bson.M{"$pull": bson.M{"lists.$.tasks": bson.M{"_id": task_id}}}
 	user_collection := createdb.ConnectDB()
 	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
 	return user
 }
+
 
 func EditList(_id primitive.ObjectID, user_id primitive.ObjectID, name string) models.User {
 	var user models.User
@@ -137,6 +160,14 @@ func InsertUser(user models.User) (*mongo.InsertOneResult, error) {
 func GetUser(email string) models.User {
 	var user models.User
 	filter := bson.M{"email": email}
+	collections := createdb.ConnectDB()
+	user_collection := collections
+	user_collection.FindOne(context.TODO(), filter).Decode(&user)
+	return user
+}
+func GetUserById(id primitive.ObjectID) models.User {
+	var user models.User
+	filter := bson.M{"_id": id}
 	collections := createdb.ConnectDB()
 	user_collection := collections
 	user_collection.FindOne(context.TODO(), filter).Decode(&user)

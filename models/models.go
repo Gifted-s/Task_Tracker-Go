@@ -28,6 +28,7 @@ type User struct {
 	Lists []List `json:"lists,omitempty" bson:"lists,omitempty"`
 }
 
+
 type TokenDetailsStruct struct {
 	RefreshUuid  string
 	AccessUuid   string
