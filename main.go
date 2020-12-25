@@ -19,6 +19,7 @@ import (
 	// "log"
 	"net/http"
 	"big-todo-app/routers"
+	"github.com/gorilla/handlers"
 	// "os"
 	// "strconv"
 	// "strings"
@@ -32,5 +33,5 @@ import (
 func main(){
 	router := routers.Router()
 	fmt.Println("Server is Listening")
-	http.ListenAndServe(":3000", router)
+	http.ListenAndServe(":4000",handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"})(router))
 }

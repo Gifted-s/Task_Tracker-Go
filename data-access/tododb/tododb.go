@@ -165,6 +165,7 @@ func GetUser(email string) models.User {
 	user_collection.FindOne(context.TODO(), filter).Decode(&user)
 	return user
 }
+
 func GetUserById(id primitive.ObjectID) models.User {
 	var user models.User
 	filter := bson.M{"_id": id}

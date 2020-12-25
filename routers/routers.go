@@ -2,7 +2,6 @@ package routers
 
 import (
 	"big-todo-app/controller"
-	"big-todo-app/middlewares"
 	"github.com/gorilla/mux"
 	// "github.com/twinj/uuid"
 
@@ -29,7 +28,7 @@ func Router() *mux.Router {
 	router.HandleFunc("/lists/complete-task/{id}/{task_id}/{user_id}", controller.CompleteTaskController).Methods("PATCH", "OPTIONS")
 	router.HandleFunc("/lists/undo-task/{id}/{task_id}/{user_id}", controller.UndoTaskController).Methods("PATCH", "OPTIONS")
 	router.HandleFunc("/login", controller.Login).Methods("POST", "OPTIONS")
-	router.HandleFunc("/signout", middlewares.TokenAuthMiddleware(controller.SignOut)).Methods("POST", "OPTIONS")
+	router.HandleFunc("/signout", controller.SignOut).Methods("POST", "OPTIONS")
 	router.HandleFunc("/refresh", controller.Refresh).Methods("POST", "OPTIONS")
 	router.HandleFunc("/signup", controller.Signup).Methods("POST", "OPTIONS")
 	return router
