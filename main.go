@@ -33,5 +33,8 @@ import (
 func main(){
 	router := routers.Router()
 	fmt.Println("Server is Listening")
-	http.ListenAndServe(":4000",handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"})(router))
+	header:=handlers.AllowedOrigins([]string{"X-Requested-With","Content-Type", "Authorization" })
+	methods:= handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PATCH", "PUT"})
+	origins:= handlers.AllowedOrigins([]string{"*"})
+	http.ListenAndServe(":4000", handlers.CORS(header, methods, origins)(router))
 }

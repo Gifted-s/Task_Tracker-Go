@@ -185,7 +185,6 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 
 
 func Signup(w  http.ResponseWriter, r *http.Request){
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var newUser models.User
 	json.NewDecoder(r.Body).Decode(&newUser)
 	inserted, err := auth.HandleSignup(newUser)
