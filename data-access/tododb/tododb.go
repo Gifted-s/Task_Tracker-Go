@@ -4,8 +4,6 @@ import (
 	"big-todo-app/data-access"
 	"big-todo-app/models"
 	"context"
-	"fmt"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,20 +15,21 @@ import (
 // var todaysDate = month.String() + " " +  strconv.Itoa(day) + " " + strconv.Itoa(year)
 
 func CreateList(user_id primitive.ObjectID, listDetails models.List) models.User {
-	var user models.User
 	user_collection := createdb.ConnectDB()
 	filter := bson.M{"_id": user_id}
 	update := bson.M{"$push": bson.M{"lists": listDetails}}
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	user_collection.FindOneAndUpdate(context.TODO(), filter, update)
+	user := GetUserById(user_id)
 	return user
 }
 
 func AddTask(list_id primitive.ObjectID, user_id primitive.ObjectID, taskDetails models.Task) models.User {
-	var user models.User
+	
 	filter := bson.M{"_id": user_id, "lists._id": list_id}
 	update := bson.M{"$push": bson.M{"lists.$.tasks": taskDetails}}
 	user_collection := createdb.ConnectDB()
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	user_collection.FindOneAndUpdate(context.TODO(), filter, update)
+	user := GetUserById(user_id)
 	return user
 }
 
@@ -101,32 +100,31 @@ func UndoTask(list_id primitive.ObjectID, user_id primitive.ObjectID, task_id pr
 	return user
 }
 func DeleteTask(list_id primitive.ObjectID, user_id primitive.ObjectID, task_id primitive.ObjectID) models.User {
-    fmt.Println(list_id, user_id, task_id)
-	var user models.User
 	filter := bson.M{"_id": user_id, "lists._id": list_id}
 	update := bson.M{"$pull": bson.M{"lists.$.tasks": bson.M{"_id": task_id}}}
 	user_collection := createdb.ConnectDB()
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	user_collection.FindOneAndUpdate(context.TODO(), filter, update)
+	user := GetUserById(user_id)
 	return user
 }
 
 
 func EditList(_id primitive.ObjectID, user_id primitive.ObjectID, name string) models.User {
-	var user models.User
 	filter := bson.M{"_id": user_id, "lists._id": _id}
 	update := bson.M{"$set": bson.M{"lists.$.name": name}}
 	collections := createdb.ConnectDB()
 	user_collection := collections
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	user_collection.FindOneAndUpdate(context.TODO(), filter, update)
+	user := GetUserById(user_id)
 	return user
 }
 
 func GetList(_id primitive.ObjectID, user_id primitive.ObjectID) models.User {
-	var user models.User
 	filter := bson.M{"_id": user_id, "lists._id": _id}
 	collections := createdb.ConnectDB()
 	user_collection := collections
-	user_collection.FindOne(context.TODO(), filter).Decode(&user)
+	user_collection.FindOne(context.TODO(), filter)
+	user := GetUserById(user_id)
 	return user
 }
 
@@ -140,11 +138,11 @@ func GetAllList(user_id primitive.ObjectID) models.User {
 }
 
 func DeleteList(_id primitive.ObjectID, user_id primitive.ObjectID) models.User {
-	var user models.User
 	user_collection := createdb.ConnectDB()
 	filter := bson.M{"_id": user_id}
 	update := bson.M{"$pull": bson.M{"lists": bson.M{"_id": _id}}}
-	user_collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&user)
+	user_collection.FindOneAndUpdate(context.TODO(), filter, update)
+	user := GetUserById(user_id)
 	return user
 }
 

@@ -8,23 +8,13 @@ import (
 	"big-todo-app/services/listservices"
 	"big-todo-app/services/taskssevices"
 	"encoding/json"
-
 	"net/http"
-
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, PATCH")
-}
-
-
-
 func SignOut(w http.ResponseWriter, r *http.Request){
-	enableCors(&w)
+
 	access_details, err := auth.ExtractTokenMeta(r)
 	if err != nil {
 		responses.BadRequest(w, "Unathorized")
@@ -43,7 +33,6 @@ func SignOut(w http.ResponseWriter, r *http.Request){
 }
 
 func PostList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	// access_details, err := auth.ExtractTokenMeta(r)
 	// if err != nil {
 	// 	responses.BadRequest(w, "Unathorized")
@@ -66,7 +55,7 @@ func PostList(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+
 	params := mux.Vars(r)
 	_id, _ := primitive.ObjectIDFromHex(params["id"])
 	user_id, _ :=primitive.ObjectIDFromHex(params["user_id"])
@@ -76,7 +65,6 @@ func RemoveList(w http.ResponseWriter, r *http.Request) {
 }
 
 func PatchList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	params := mux.Vars(r)
 	listMap := map[string]string{}
 	json.NewDecoder(r.Body).Decode(&listMap)
@@ -87,7 +75,7 @@ func PatchList(w http.ResponseWriter, r *http.Request) {
 	responses.SuccessResponse(w, 200, response)
 }
 func PostTask(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+
 	params := mux.Vars(r)
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
@@ -97,11 +85,10 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 	task.ID = primitive.NewObjectID()
 
 	response := taskssevices.AddTaskService(_id,user_id, task)
-
 	responses.SuccessResponse(w, 200, response)
 }
 func EditTask(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+	
 	params := mux.Vars(r)
 	var task models.Task
 	json.NewDecoder(r.Body).Decode(&task)
@@ -114,7 +101,6 @@ func EditTask(w http.ResponseWriter, r *http.Request) {
 	responses.SuccessResponse(w, 200, response)
 }
 func CompleteTaskController(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	params := mux.Vars(r)
 
 	_id, _ := primitive.ObjectIDFromHex(params["id"])
@@ -125,7 +111,6 @@ func CompleteTaskController(w http.ResponseWriter, r *http.Request) {
 }
 
 func UndoTaskController(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	params := mux.Vars(r)
 
 	_id, _ := primitive.ObjectIDFromHex(params["id"])
@@ -136,7 +121,6 @@ func UndoTaskController(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteTaskController(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	params := mux.Vars(r)
 	_id, _ := primitive.ObjectIDFromHex(params["id"])
 	task_id, _ := primitive.ObjectIDFromHex(params["task_id"])
@@ -146,7 +130,6 @@ func DeleteTaskController(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchLists(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	params := mux.Vars(r)
 	user_id, _ :=primitive.ObjectIDFromHex(params["user_id"])
 	response, err := listservices.GetListsService(user_id)
@@ -157,7 +140,6 @@ func FetchLists(w http.ResponseWriter, r *http.Request) {
 }
 
 func FetchList(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	params := mux.Vars(r)
 	_id, _ := primitive.ObjectIDFromHex(params["id"])
 	user_id, _ :=primitive.ObjectIDFromHex(params["user_id"])
@@ -170,7 +152,6 @@ func FetchList(w http.ResponseWriter, r *http.Request) {
 
 
 func Refresh(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	mapToken := map[string]string{}
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&mapToken)
@@ -197,7 +178,6 @@ func Signup(w  http.ResponseWriter, r *http.Request){
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	var newUser models.User
 	json.NewDecoder(r.Body).Decode(&newUser)
 	

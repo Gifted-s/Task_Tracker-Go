@@ -7,6 +7,6 @@ import (
 func GetTodayDate() string {
 	var year, month, day = time.Now().Date()
 
-	var todaysDate = month.String() + " " +  strconv.Itoa(day) + " " + strconv.Itoa(year)
+	var todaysDate = month.String() + " " +  strconv.Itoa(day) + ", " + strconv.Itoa(year)
     return todaysDate	
 }

@@ -280,7 +280,7 @@ if userExist.Email != "" {
 }
 hashedPassword,errToHash := modules.HashPassword(user.Password)
 if errToHash!= nil {
-	return nil, "Error hashing password"
+	return nil, "Password invalid"
 }
 user.Password = hashedPassword
 user.DateCreated = modules.GetTodayDate()
@@ -296,7 +296,7 @@ return insertResponse, ""
 func HandleLogin(user models.User)(models.User, string){
 	userExist := tododb.GetUser(user.Email)
 	if userExist.Email == "" {
-		return user, "User does e notxist"
+		return user, "User does not exist"
 	}
 	
 	passwordValid := modules.CheckPasswordHash(user.Password, userExist.Password )
