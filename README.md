@@ -1,3 +1,3 @@
 # Task Tracker
 
-## This project allows you track your tasks 
+## This project allows you keep track of your tasks 
